@@ -1,0 +1,761 @@
+openapi: 3.0.3
+info:
+  title: Social network - OpenAPI 3.0
+  contact:
+    email: mortalis94@gmail.com
+  license:
+    name: MIT
+  version: 1.0.0
+servers:
+  - url: https://social-network.com/api/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: friend
+  - name: profile
+  - name: post
+  - name: media
+  - name: chat
+  - name: message
+paths:
+  /friends:
+    post:
+      tags:
+        - friend
+      summary: Add a new friend
+      parameters:
+        - name: user_id
+          in: query
+          description: Friend identity
+          required: true
+          schema:
+            type: integer
+            example: 115547
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShort'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Friend is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /friends/{user_id}:
+    delete:
+      tags:
+        - friend
+      summary: Delete a friend
+      parameters:
+        - name: user_id
+          in: path
+          description: Friend identity
+          required: true
+          schema:
+            type: integer
+            example: 115547
+      responses:
+        204:
+          description: Successful operation
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Friend is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /users/{user_id}/friends:
+    get:
+      tags:
+        - friend
+      summary: Get user's friends
+      parameters:
+        - name: user_id
+          in: path
+          description: User identity
+          required: true
+          schema:
+            type: integer
+            example: 115547
+        - name: per_page
+          in: query
+          description: Friends per page
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+            example: 50
+        - name: page
+          in: query
+          description: Current page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserShortList'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: User is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /users/{user_id}/profile:
+    get:
+      tags:
+        - profile
+      summary: Get user's profile
+      parameters:
+        - name: user_id
+          in: path
+          description: User identity
+          required: true
+          schema:
+            type: integer
+            example: 115547
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: User is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /media:
+    post:
+      tags:
+        - media
+      summary: Start process to upload media
+      parameters:
+        - name: Upload-Length
+          in: header
+          description: Size of the entire upload in bytes
+          required: true
+          schema:
+            type: integer
+            example: 521462
+        - name: Upload-Metadata
+          in: header
+          description: Filename and filetype base64 decoded
+          required: true
+          schema:
+            type: string
+            example: filename R28uZG9jeA==,filetype YXBwbGljYXRpb24vdm5kLm9wZW54bWxmb3Jt
+      responses:
+        201:
+          description: Successful operation
+          headers:
+            Location:
+              description: Link to upload media
+              schema:
+                type: string
+                example: https://social-network.com/api/v1/media/7ec21...
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /media/{media_id}:
+    patch:
+      tags:
+        - media
+      summary: Upload media
+      parameters:
+        - name: media_id
+          in: path
+          description: Media identity
+          required: true
+          schema:
+            type: string
+            example: 7ec2199a25e23d3b3b089802e3891e4e
+        - name: Upload-Offset
+          in: header
+          description: Byte offset within a resource to resume uploading
+          schema:
+            type: integer
+            example: 70
+      requestBody:
+        content:
+          application/offset+octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        204:
+          description: Successful operation
+          headers:
+            Upload-Offset:
+              description: Byte offset within a resource that been uploaded
+              schema:
+                type: integer
+                example: 521462
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /posts:
+    post:
+      tags:
+        - post
+      summary: Add a new post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+                media_ids:
+                  type: array
+                  items:
+                    type: string
+                  example: ['7ec2199a25e23d3b3b089802e3891e4e']
+                  description: Media identity
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /users/{user_id}/posts:
+    get:
+      tags:
+        - post
+      summary: Get posts for a user's feed
+      parameters:
+        - name: user_id
+          in: path
+          description: User identity
+          required: true
+          schema:
+            type: integer
+            example: 115547
+        - name: per_page
+          in: query
+          description: Posts per page
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+            example: 50
+        - name: page
+          in: query
+          description: Current page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostList'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: User is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /chats:
+    get:
+      tags:
+        - chat
+      summary: Get chats
+      parameters:
+        - name: per_page
+          in: query
+          description: Friends per page
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+            example: 50
+        - name: page
+          in: query
+          description: Current page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatList'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /chats/{chat_id}/messages:
+    post:
+      tags:
+        - message
+      summary: Send message to chat
+      parameters:
+        - name: chat_id
+          in: path
+          description: Chat identity
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - content
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+        required: true
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Chat is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+    get:
+      tags:
+        - message
+      summary: Get chat messages
+      parameters:
+        - name: chat_id
+          in: path
+          description: Chat identity
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: per_page
+          in: query
+          description: Messages per page
+          required: true
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+            example: 50
+        - name: sort
+          in: query
+          description: Sort order by sent_at
+          required: true
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+            example: asc
+        - name: id_after
+          in: query
+          description: Last retrieved message identity
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageList'
+        400:
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Chat is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+components:
+  schemas:
+    UserShort:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 115547
+        first_name:
+          type: string
+          example: "Mob"
+        last_name:
+          type: string
+          example: "Santos"
+        avatar:
+          type: string
+          description: Link
+          example: "https://cdn.wpc0001.edgecastcdn.net/115547.jpeg"
+      
+    UserShortList:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total users
+          example: 120
+        total_pages:
+          type: integer
+          description: Total pages
+          example: 10
+        page:
+          type: integer
+          description: Current page
+          example: 1
+        has_next:
+          type: boolean
+          description: Whether next page exists or not
+          example: true
+        has_prev:
+          type: boolean
+          description: Whether previous page exists or not
+          example: false
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserShort"
+    
+    UserDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 115547
+        first_name:
+          type: string
+          example: Mob
+        last_name:
+          type: string
+          example: Santos
+        avatar:
+          type: string
+          description: Link
+          example: https://cdn.wpc0001.edgecastcdn.net/115547.jpeg
+        birth_date:
+          type: string
+          format: date
+        city:
+          type: string
+          example: Moscow
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['development', 'sport', 'travelling']
+    
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        author_id:
+          type: integer
+          example: 115547
+        text:
+          type: string
+          example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+        media_links:
+          type: array
+          items:
+            type: string
+          example: ['https://cdn.wpc0001.edgecastcdn.net/7ec2199a25e23d3b3b089802e3891e4e.jpeg']
+        created_at:
+          type: string
+          format: datetime
+          example: "2017-06-02T11:10:15+03:00"
+    
+    PostList:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total posts
+          example: 120
+        total_pages:
+          type: integer
+          description: Total pages
+          example: 10
+        page:
+          type: integer
+          description: Current page
+          example: 1
+        has_next:
+          type: boolean
+          description: Whether next page exists or not
+          example: true
+        has_prev:
+          type: boolean
+          description: Whether previous page exists or not
+          example: false
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+          
+    
+    Chat:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Alex"
+        type:
+          type: string
+          enum: ['conversation', 'group']
+          example: conversation
+        description:
+          type: string
+          example: Description
+        created_at:
+          type: string
+          format: datetime
+          example: "2017-06-02T11:10:15+03:00"
+    
+    ChatList:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total chats
+          example: 120
+        total_pages:
+          type: integer
+          description: Total pages
+          example: 10
+        page:
+          type: integer
+          description: Current page
+          example: 1
+        has_next:
+          type: boolean
+          description: Whether next page exists or not
+          example: true
+        has_prev:
+          type: boolean
+          description: Whether previous page exists or not
+          example: false
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Chat"
+    
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+        content_type:
+          type: string
+          enum: ['text', 'file', 'image', 'video', 'audio']
+        sender_id:
+          type: integer
+          example: 115547
+        sent_at:
+          type: string
+          format: datetime
+          example: "2017-06-02T11:10:15+03:00"
+        delivered_at:
+          type: string
+          format: datetime
+          example: "2017-06-02T11:10:15+03:00"
+        seen_at:
+          type: string
+          format: datetime
+          example: "2017-06-02T11:10:15+03:00"
+    
+    MessageList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+    
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Internal service's code
+          example: 110103
+        message:
+          type: string
+          description: Error message
+          example: Something went wrong
+  
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
