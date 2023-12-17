@@ -63,7 +63,7 @@ Ref: hashtags_posts.hashtag_id > hashtags.id
 Table post_media {
   id integer [primary key]
   post_id integer [not null]
-  link string [not null]
+  link varchar [not null]
 }
 
 Ref: post_media.post_id > posts.id
