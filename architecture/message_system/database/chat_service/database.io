@@ -1,6 +1,6 @@
 // Replication:
 // - master-slave (async)
-// - replication factor 3
+// - replication factor 2
 
 enum chat_type {
   group
@@ -27,20 +27,3 @@ Table participants {
 }
 
 Ref: participants.chat_id > chats.id
-
-// Sharding:
-// - key based by chat_id
-// - range based by sent_at (per 1 month)
-
-Table messages {
-  id integer [primary key]
-  chat_id integer [not null]
-  sender_id integer [not null] // Ref: users.id (profiles_and_relations.io)
-  text varchar [not null]
-  sent_at timestamp [not null]
-  delivered_at timestamp
-  seen_at timestamp
-}
-
-Ref: messages.chat_id > chats.id
-
