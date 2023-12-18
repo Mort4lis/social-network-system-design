@@ -4,7 +4,6 @@
 Person(user, "User")
 Container(loadBalancer, "Load Balancer", "Nginx", "Uses round-robin")
 Container(apiGateway, "API Gateway", "Istio")
-Container(relationSystem, "Relation System", "Software system", "Stores relations (friends, subscribers, etc.) between users")
 
 System_Boundary(profileSystem, "Profile System") {
     Container(profileService, "Profile Service", "Go", "Handles user profiles")
@@ -14,6 +13,5 @@ System_Boundary(profileSystem, "Profile System") {
 Rel(user, loadBalancer, "Views user's profile", "REST")
 Rel(loadBalancer, apiGateway, "Views user's profile", "REST")
 Rel(apiGateway, profileService, "Views user's profile", "GRPC")
-Rel(profileService, relationSystem, "Gets relations for profile", "GRPC")
 Rel(profileService, profileDatabase, "CRUD profiles")
 @enduml
