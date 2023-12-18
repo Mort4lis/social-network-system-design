@@ -7,10 +7,11 @@ Container(apiGateway, "API Gateway", "Istio")
 
 System_Boundary(messageSystem, "Message System") {
     Container(chatService, "Chat Service", "Go", "Handles creating and reading chats, participants")
-    Container(messageService, "Message Service", "Go", "Handles message streams")
+    Container(messageService, "Message Service", "Go", "Handles message streams, uses cache-aside strategy")
     Container(serviceDiscovery, "Service Discovery", "Zookeeper", "Stores information about which user has connection with the Message Service")
     ContainerDb(chatDatabase, "Chat database", "PostgreSQL", "Stores chats, participants")
     ContainerDb(messageDatabase, "Message database", "Cassandra", "Stores messages")
+    ContainerDb(messageCache, "Message cache", "Redis", "Stores the last N messages for the chats, uses LRU eviction policy")
 }
 
 Rel(user, loadBalancer, "Views chats, sends and reads messages", "REST")
@@ -25,6 +26,7 @@ Rel(messageService, chatService, "Get participants for the chat", "GRPC")
 Rel(messageService, serviceDiscovery, "For every participant discover its Message Service")
 Rel(messageService, messageService, "Sends message stream to recipient's Message Service", "GRPC")
 Rel(messageService, messageDatabase, "Creates and reads messages")
+Rel(messageService, messageCache, "Creates and reads messages")
 
 Rel(chatService, chatDatabase, "Creates and reads chats, participants")
 @enduml
