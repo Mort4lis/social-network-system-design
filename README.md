@@ -33,6 +33,7 @@ The system should meet the following requirements:
 - Each user sends an average of 10 messages per day
 - Each user reads messages an average of 20 times per day
 - The size of each message is a maximum of 1000 characters
+- A user can have a maximum of 1000 friends
 - A group can have a maximum of 100 participants
 - Posts and messages are stored forever
 - Geo distribution is not supported (CIS only)
@@ -119,3 +120,53 @@ Number of disks (disk capacity = 16 TB):
 $$
 \frac{11.15 \space PB \times 1000}{16 \space TB} = \sim 697 \space number \space of \space disks
 $$
+
+## Design overview
+
+<p align="center">
+  <img alt="System context diagram" src="./images/diagrams/context.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 1.</b> System context diagram
+</p>
+
+<p align="center">
+  <img alt="Profile system container diagram" src="./images/diagrams/containers/profile_system.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 2.</b> Profile system container diagram
+</p>
+
+<p align="center">
+  <img alt="Relation system container diagram" src="./images/diagrams/containers/relation_system.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 2.</b> Relation system container diagram
+</p>
+
+<p align="center">
+  <img alt="Post system container diagram" src="./images/diagrams/containers/post_system.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 2.</b> Post system container diagram
+</p>
+
+<p align="center">
+  <img alt="Media system container diagram" src="./images/diagrams/containers/media_system.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 2.</b> Media system container diagram
+</p>
+
+<p align="center">
+  <img alt="Message system container diagram" src="./images/diagrams/containers/message_system.svg"/>
+</p>
+
+<p align="center">
+    <b>Level 2.</b> Message system container diagram
+</p>
