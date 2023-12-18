@@ -9,7 +9,7 @@ info:
 servers:
   - url: https://social-network.com/api/v1
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 tags:
   - name: friend
   - name: profile
@@ -37,7 +37,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserShort'
+                properties:
+                  user_id:
+                    type: integer
+                    example: 115547
         400:
           description: Invalid parameters
           content:
@@ -56,7 +59,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /friends/{user_id}:
     delete:
       tags:
@@ -91,7 +94,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /users/{user_id}/friends:
     get:
       tags:
@@ -147,7 +150,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /users/{user_id}/profile:
     get:
       tags:
@@ -186,7 +189,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /media:
     post:
       tags:
@@ -228,7 +231,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /media/{media_id}:
     patch:
       tags:
@@ -275,7 +278,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /posts:
     post:
       tags:
@@ -286,17 +289,17 @@ paths:
           application/json:
             schema:
               required:
-                - text
+                - description
               type: object
               properties:
-                text:
+                description:
                   type: string
                   example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
                 media_ids:
                   type: array
                   items:
                     type: string
-                  example: ['7ec2199a25e23d3b3b089802e3891e4e']
+                  example: [ '7ec2199a25e23d3b3b089802e3891e4e' ]
                   description: Media identity
         required: true
       responses:
@@ -318,7 +321,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-                
+
   /users/{user_id}/posts:
     get:
       tags:
@@ -374,7 +377,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /chats:
     get:
       tags:
@@ -411,7 +414,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
   /chats/{chat_id}/messages:
     post:
       tags:
@@ -430,10 +433,10 @@ paths:
           application/json:
             schema:
               required:
-                - content
+                - text
               type: object
               properties:
-                content:
+                text:
                   type: string
                   example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
         required: true
@@ -468,7 +471,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        
+
     get:
       tags:
         - message
@@ -497,7 +500,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: ['asc', 'desc']
+            enum: [ 'asc', 'desc' ]
             example: asc
         - name: id_after
           in: query
@@ -530,7 +533,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+
 components:
   schemas:
     UserShort:
@@ -545,11 +548,11 @@ components:
         last_name:
           type: string
           example: "Santos"
-        avatar:
+        photo_link:
           type: string
           description: Link
           example: "https://cdn.wpc0001.edgecastcdn.net/115547.jpeg"
-      
+
     UserShortList:
       type: object
       properties:
@@ -577,7 +580,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/UserShort"
-    
+
     UserDetail:
       type: object
       properties:
@@ -590,13 +593,13 @@ components:
         last_name:
           type: string
           example: Santos
-        avatar:
+        description:
+          type: string
+          example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+        photo_link:
           type: string
           description: Link
           example: https://cdn.wpc0001.edgecastcdn.net/115547.jpeg
-        birth_date:
-          type: string
-          format: date
         city:
           type: string
           example: Moscow
@@ -604,8 +607,8 @@ components:
           type: array
           items:
             type: string
-          example: ['development', 'sport', 'travelling']
-    
+          example: [ 'development', 'sport', 'travelling' ]
+
     Post:
       type: object
       properties:
@@ -615,19 +618,33 @@ components:
         author_id:
           type: integer
           example: 115547
-        text:
+        description:
           type: string
           example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
+        likes:
+          type: integer
+          example: 1241
+        comments:
+          type: integer
+          example: 56
+        views:
+          type: integer
+          example: 10425
+        hashtags:
+          type: array
+          items:
+            type: string
+          example: [ 'investment', 'money' ]
         media_links:
           type: array
           items:
             type: string
-          example: ['https://cdn.wpc0001.edgecastcdn.net/7ec2199a25e23d3b3b089802e3891e4e.jpeg']
+          example: [ 'https://cdn.wpc0001.edgecastcdn.net/7ec2199a25e23d3b3b089802e3891e4e.jpeg' ]
         created_at:
           type: string
           format: datetime
           example: "2017-06-02T11:10:15+03:00"
-    
+
     PostList:
       type: object
       properties:
@@ -655,8 +672,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Post"
-          
-    
+
+
     Chat:
       type: object
       properties:
@@ -668,16 +685,13 @@ components:
           example: "Alex"
         type:
           type: string
-          enum: ['conversation', 'group']
+          enum: [ 'conversation', 'group' ]
           example: conversation
-        description:
-          type: string
-          example: Description
         created_at:
           type: string
           format: datetime
           example: "2017-06-02T11:10:15+03:00"
-    
+
     ChatList:
       type: object
       properties:
@@ -705,19 +719,16 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Chat"
-    
+
     Message:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        content:
+        text:
           type: string
           example: Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua
-        content_type:
-          type: string
-          enum: ['text', 'file', 'image', 'video', 'audio']
         sender_id:
           type: integer
           example: 115547

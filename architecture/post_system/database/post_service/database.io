@@ -1,13 +1,13 @@
 // Replication:
 // - master-slave (async)
-// - replication factor 3
+// - replication factor 2
 
 // Sharding:
 // - key based by id
 
 Table posts {
   id integer [primary key]
-  author_id integer [not null] // Ref: users.id (profiles_and_relations.io)
+  author_id integer [not null] // user_id
   description varchar [not null]
   likes integer [default: 0]
   views integer [default: 0]
@@ -17,10 +17,20 @@ Table posts {
 // Sharding:
 // - key based by post_id
 
+Table likes {
+  post_id integer [not null]
+  liker_id integer [not null] // user_id
+}
+
+Ref: likes.post_id > posts.id
+
+// Sharding:
+// - key based by post_id
+
 Table comments {
   id integer [primary key]
   post_id integer [not null]
-  sender_id integer [not null] // Ref: users.id (profiles_and_relations.io)
+  sender_id integer [not null] // user_id
   text varchar [not null]
   created_at timestamp [default: `now()`]
 }
@@ -53,7 +63,7 @@ Ref: hashtags_posts.hashtag_id > hashtags.id
 Table post_media {
   id integer [primary key]
   post_id integer [not null]
-  media_id integer [not null] // Ref: media.id (media.io)
+  link varchar [not null]
 }
 
 Ref: post_media.post_id > posts.id

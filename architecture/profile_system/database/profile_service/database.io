@@ -1,6 +1,6 @@
 // Replication:
 // - master-slave (async)
-// - replication factor 3
+// - replication factor 2
 
 Table cities {
   id integer [primary key]
@@ -27,18 +27,6 @@ Table interests_profiles {
 
 Ref: interests_profiles.interest_id > interests.id
 Ref: interests_profiles.profile_id > profiles.id
-Ref: interests_profiles.user_id > users.id
-
-// Sharding:
-// - key based by id
-
-Table users {
-  id integer [primary key]
-  username varchar [not null, unique]
-  email varchar [not null, unique]
-  pwd_hash varchar [not null]
-  created_at timestamp [default: `now()`]
-}
 
 // Sharding:
 // - key based by user_id
@@ -49,31 +37,9 @@ Table profiles {
   first_name varchar [not null]
   last_name varchar [not null]
   description varchar
-  photo_id integer // Ref: media.id (media.io)
+  photo_link varchar
   city_id integer
   created_at timestamp [default: `now()`]
 }
 
-Ref: profiles.user_id - users.id
 Ref: profiles.city_id > cities.id
-
-enum relation_type {
-  subscriber
-  friend
-  love
-}
-
-// Sharding:
-// - key based by src_user_id
-
-Table relations {
-  id integer [primary key]
-  src_user_id integer [not null]
-  dst_user_id integer [not null]
-  type relation_type [not null]
-  created_at timestamp [default: `now()`]
-}
-
-Ref: relations.src_user_id > users.id
-Ref: relations.dst_user_id > users.id
-
