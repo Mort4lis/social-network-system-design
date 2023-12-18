@@ -10,7 +10,7 @@ The system should meet the following requirements:
 ### Functional requirements
 
 - Add and delete friends
-- View user's friends
+- View users' friends
 - View user's profile
 - Publish posts
 - View feed of posts (home and user feed)

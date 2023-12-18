@@ -10,8 +10,8 @@ System_Boundary(relationSystem, "Relation System") {
     ContainerDb(relationDatabase, "Relation database", "PostgreSQL", "Stores relations (friends, subscribers, etc.)")
 }
 
-Rel(user, loadBalancer, "Adds and removes friends", "REST")
-Rel(loadBalancer, apiGateway, "Adds and removes friends", "REST")
-Rel(apiGateway, relationService, "Adds and removes friends", "GRPC")
-Rel(relationService, relationDatabase, "Changes relations")
+Rel(user, loadBalancer, "Views friends, adds and removes friends", "REST")
+Rel(loadBalancer, apiGateway, "Views friends, adds and removes friends", "REST")
+Rel(apiGateway, relationService, "Views friends, adds and removes friends", "GRPC")
+Rel(relationService, relationDatabase, "CRUD relations")
 @enduml
