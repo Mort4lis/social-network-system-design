@@ -4,6 +4,8 @@
 //
 // Sharding:
 // - key based by chat_id
+//
+// Partitioning within the shard:
 // - range based by sent_at (per 1 month)
 
 Table messages {
